@@ -3,7 +3,6 @@ const server = http.createServer((req,res)=>{
     console.log(`[Data Service] Received request at ${req.url}`);
     console.log(`[Data Service] Injected Client IP (X-Forwarded-For): ${req.headers['x-forwarded-for'] || 'Direct Request'}`);
 
-    // Route handling for /data/dashboard
     if (req.url === '/data/dashboard' && req.method === 'GET') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ 
