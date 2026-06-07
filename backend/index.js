@@ -1,6 +1,13 @@
 import http from 'http';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
 const port = 8080;
-const server = http.createServer((req,res)=>{
+const sslOptions ={
+    key: fs.readFileSync(path.join(__dirname, 'ssl', 'key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'ssl', 'cert.pem'))
+};
+const server = https.createServer(sslOptions,(req,res)=>{
     console.log('[Gateway] Intercepted request:${req.method} ${req.url}');
     const clientIp = req.socket.remoteAddress;
     
