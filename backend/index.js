@@ -2,13 +2,23 @@ import http from 'http';
 import https from 'https';
 import fs from 'fs';
 import path from 'path';
+import {isRateLimited}from './ratelimiter.js';
 const port = 8080;
 const sslOptions ={
     key: fs.readFileSync(path.join(__dirname, 'ssl', 'key.pem')),
     cert: fs.readFileSync(path.join(__dirname, 'ssl', 'cert.pem'))
 };
 const server = https.createServer(sslOptions,(req,res)=>{
-    console.log('[Gateway] Intercepted request:${req.method} ${req.url}');
+    if (isRateLimited(clientIp)) {
+        console.log(` [Gateway] BLOCKED abusive traffic from IP: ${clientIp}`);
+        res.writeHead(429, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+            error: "Too Many Requests", 
+            message: "Rate limit exceeded. Your bucket is empty! Please wait and try again." 
+        }));
+        return; // Halt execution completely. The backend services never see this.
+    }
+    console.log(` [Gateway] Intercepted request: ${req.method} ${req.url}`);
     const clientIp = req.socket.remoteAddress;
     
     let targetPort =null;
