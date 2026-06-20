@@ -37,4 +37,4 @@ function isRateLimited(clientIp) {
     return true; // Rate-limited! Block them at the gate.
 }
 
-module.exports = { isRateLimited };
+export { isRateLimited };
